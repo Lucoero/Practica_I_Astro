@@ -45,7 +45,7 @@ def Lined_Spectra(lamb,flux,lines, title = "Lined_Spectra"):
     for name in lines:
         ax.vlines(lines[name], minLine,maxLine, label = name, linestyle = "dashed", linewidth = lWidth*lineScale)
         ax[0].annotate(name,xy = (lines[name] + 5,maxLine -0.15*maxLine), xycoords = "data", ha = 'center', va = 'bottom')
-    ax.legend(loc = "best", ncol = ncol)
+    fig.legend(ncol = ncol)
     fig.show()
     return
 
@@ -83,7 +83,7 @@ def Compare_Spectra(lambArr,fluxArr,TArr = [],lines = {}, title = "Comparison be
         ax[0].annotate(name,xy = (lines[name] + 5,maxLine -0.15*maxLine), xycoords = "data", ha = 'center', va = 'bottom',rotation = 'vertical')
         for i in range(1,n):
             ax[i].plot((lines[name],lines[name]), (minLine,maxLine), linestyle = "dashed",linewidth = lWidth * lineScale)
-    ax[0].legend(loc = "best", ncol = ncol)
+    fig.legend(ncol = ncol)
     fig.show()
     return
     
