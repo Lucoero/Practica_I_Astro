@@ -17,7 +17,7 @@ S2 = "estrella2.dat"
 S3 = "estrella3.dat"
 S4 = "estrella4.dat"
 
-# Espectros del catalogo MILES
+# Espectros del catalogo MILES. https://research.iac.es/proyecto/miles/pages/stellar-libraries/the-catalogue.php
 Miles_Name = "s0010.fits"
 
 
@@ -25,7 +25,7 @@ Miles_Name = "s0010.fits"
 """
 Nota: Lineas mas destacables
 
-    Balmer(partes segundo nivel) (https://es.wikipedia.org/wiki/L%C3%ADneas_de_Balmer): 
+    Balmer(partes segundo nivel) https://es.wikipedia.org/wiki/Líneas_de_Balmer
         - Halpha (salto 2 --> 3): 6563 A
         -Hbeta (salto 2 --> 4): 4861 
         -HY (2--> 5): 4340 A
@@ -74,7 +74,7 @@ TArr = np.array([T1,T2,T3,T4])
 
 LambsArr = np.array([Lamb1,Lamb2,Lamb3,Lamb4],dtype = object)
 FluxsArr = np.array([Flux1,Flux2,Flux3,Flux4],dtype = object)
-#%% Correcciones
+#%% Normalizacion
 #%% Ploteado
 
 SSp.Compare_Spectra(LambsArr,FluxsArr,TArr = TArr,lines = lineas)
