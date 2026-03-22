@@ -120,12 +120,14 @@ Nada, Lamb1_lineas,Nada2= Herr.BuscadorMinimos(np.array([Lamb1,Flux1],dtype= obj
 #%% Ploteado
 '''
 
-SSp.Compare_Spectra(LambsArr,FluxsArr,TArr = TArr,lines = lines)
-plt.show()
+#SSp.Compare_Spectra(LambsArr,FluxsArr,TArr = TArr,lines = lines)
+#plt.show()
 
 #SSp.Blank_Spectra(MLamb, MFlux)
 par = [93]
-y = norm.filtro(3,Flux1, par)
+y = norm.filtro(Flux4,par)
+y= norm.filtro(y,par)
+y= norm.filtro(y,par)#
 
 
 plt.plot(Lamb1, Flux1)
