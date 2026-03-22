@@ -72,6 +72,7 @@ lineas_balmer= {
     r'$H_{\gamma}$': 4861,
     r'$H_{\delta}$': 4340,
     r'$H_{\epsilon}$': 4120,   
+    r'$H_{\delta}$ (h)': 4100 # Es de las lineas de Fraunhofer. https://arxiv.org/pdf/2410.07301 pg 4
     }
 
 lineas_helio= {
@@ -120,9 +121,9 @@ Nada, Lamb1_lineas,Nada2= Herr.BuscadorMinimos(np.array([Lamb1,Flux1],dtype= obj
 #%% Ploteado
 '''
 
-#SSp.Compare_Spectra(LambsArr,FluxsArr,TArr = TArr,lines = lines)
-#plt.show()
-
+SSp.Compare_Spectra(LambsArr,FluxsArr,TArr = TArr,lines = lines)
+plt.show()
+"""
 #SSp.Blank_Spectra(MLamb, MFlux)
 par = [93]
 y = norm.filtro(Flux4,par)
@@ -134,3 +135,4 @@ plt.plot(Lamb1, Flux1)
 plt.plot(Lamb1, y)
 plt.show()
 plt.plot(Lamb1,[Flux1[i]/y[i] for i in range(len(Flux1))])
+"""
