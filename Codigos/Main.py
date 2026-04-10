@@ -91,10 +91,10 @@ lineas_helio= {
     }
 
 lines= {}
-lines.update(lineas_metalicas)
+#lines.update(lineas_metalicas)
 lines.update(lineas_balmer)
 lines.update(lineas_helio)
-lines.update(lineas_fe)
+#lines.update(lineas_fe)
 
 #%% Obtencion de datos
 
@@ -125,8 +125,8 @@ fit1,N1 = Norm.Normalizar(Lamb1,Flux1,params,iteraciones = nIter)
 fit2,N2 = Norm.Normalizar(Lamb2,Flux2,params,iteraciones = nIter)
 fit3,N3 = Norm.Normalizar(Lamb3,Flux3,params,iteraciones = nIter)
 fit4,N4 = Norm.Normalizar(Lamb4,Flux4,params,iteraciones = nIter)
-
-Norm.Normalise_Folder("Catalogo_Miles", "Miles_Normalizado")
+#%%% Por si quieres normalizar una base de datos en concreto
+#Norm.Normalise_Folder("Catalogo_Miles", "Miles_Normalizado")
 
 #%%% Prueba graficos
 """
@@ -139,6 +139,7 @@ normalizado2 = (Lamb2,N2)
 SSp.Compare_Norms([normal1,normal2],[normalizado1,normalizado2], fitArr = [fit1,fit2],lines = lines,NameArr = ["Nombre1","Nombre2"])
 """
 #%% Busqueda del espectro
+"""
 smChosen1,minD1,smCh1,DArr1 = Par.CompareAllSpectra("Catalogo_Miles", (Lamb1,Flux1),lines = lines, distFunc = "WASS", nCandidates = nCan,Normalise_Spectras = False)
 #0820, HD208501, B7Iab C
 #0711, HD176437, B9.5II-III C
@@ -155,13 +156,13 @@ smChosen4,minD4,smCh4,DArr4 = Par.CompareAllSpectra("Catalogo_Miles", (Lamb4,Flu
 #0387, HD090508, F9-V C
 #0290, HD066573, G5VFe-1.3CH-1 C
 #0105, HD018907, G9:V C
-
+"""
 #%% Ploteado
 
-#SSp.Compare_Spectra(LambsList,FluxsList,NameArr = [S1,S2,S3,S4],lines = lines)
+SSp.Compare_Spectra(LambsList,FluxsList,NameArr = [S1,S2,S3,S4],lines = lines, title = "Estrellas Problema")
 
 #SSp.Blank_Spectra(Lamb1,N1)
-"""
+
 # Array de todas las normalizaciones para comparar
 # Lo actualice para usar listas en las funciones (mas flexible), pero me dio pereza reescribir esta parte y como funciona ea
 normal1 = np.array([Lamb1,Flux1],dtype = object)
@@ -179,9 +180,10 @@ normArr = np.array([normalizado1,normalizado2,normalizado3,normalizado4])
 
 fitArr = np.array([fit1,fit2,fit3,fit4],dtype = object)
 SSp.Compare_Norms(defArr,normArr,fitArr = fitArr, lines = lines)
-"""
+
 #%%% Ploteado de los resultados de la busqueda
 # Comparamos los candidatos del primero
+"""
 normalCompare1 = []
 normCompare1 = []
 smFit1 = []
@@ -265,6 +267,6 @@ for i in range(len(smCh4)):
     
     namesArr1.append(smCh1[i])
 SSp.Compare_Norms(normalCompare1,normCompare1, fitArr = smFit1, lines = lines, title = "Comparacion para el espectro problema 4",NameArr= namesArr1)
-
+"""
 
 
