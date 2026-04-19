@@ -56,12 +56,16 @@ lineas_metalicas= {
     "Ca II (K)": 3934,
     "Ca II (H)": 3968,
     "Mg II 4481": 4481,
-    "Si IV 4654": 4654,
-    "Si IV 4631": 4631,
+    "Si IV (4089)": 4089,
+    "Si III (4552)": 4552,
+    "Si II (4128)": 4128,
     "Ti II 4179":4179,
     "Na (D2)": 5890
     }
-
+"""
+"Si IV 4654": 4654,
+"Si IV 4631": 4631,
+"""
 lineas_fe= {
     "Fe I 4383": 4383,
     "Fe I 4271": 4271,
@@ -71,9 +75,10 @@ lineas_fe= {
 
 lineas_balmer= {
     r'$H_{\alpha}$': 6563,
-    r'$H_{\gamma}$': 4861,
-    r'$H_{\delta}$': 4340,
-    r'$H_{\epsilon}$': 4120,   
+    r'$H_{\beta}$': 4861,
+    r'$H_{\gamma}$': 4340,
+    r'$H_{\delta}$': 4102,
+    r'$H_{\epsilon}$': 3970,   
     r'$H_{\delta}$ (h)': 4100 # Es de las lineas de Fraunhofer. https://arxiv.org/pdf/2410.07301 pg 4
     }
 
@@ -91,10 +96,10 @@ lineas_helio= {
     }
 
 lines= {}
-#lines.update(lineas_metalicas)
+lines.update(lineas_metalicas)
 lines.update(lineas_balmer)
 lines.update(lineas_helio)
-#lines.update(lineas_fe)
+lines.update(lineas_fe)
 
 #%% Obtencion de datos
 
@@ -162,7 +167,7 @@ smChosen4,minD4,smCh4,DArr4 = Par.CompareAllSpectra("Catalogo_Miles", (Lamb4,Flu
 SSp.Compare_Spectra(LambsList,FluxsList,NameArr = [S1,S2,S3,S4],lines = lines, title = "Estrellas Problema")
 
 #SSp.Blank_Spectra(Lamb1,N1)
-
+"""
 # Array de todas las normalizaciones para comparar
 # Lo actualice para usar listas en las funciones (mas flexible), pero me dio pereza reescribir esta parte y como funciona ea
 normal1 = np.array([Lamb1,Flux1],dtype = object)
@@ -183,6 +188,7 @@ SSp.Compare_Norms(defArr,normArr,fitArr = fitArr, lines = lines)
 
 #%%% Ploteado de los resultados de la busqueda
 # Comparamos los candidatos del primero
+"""
 """
 normalCompare1 = []
 normCompare1 = []
