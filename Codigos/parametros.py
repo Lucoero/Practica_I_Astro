@@ -48,7 +48,7 @@ def get_Temp(lamb, flux): #Saca temperatura con Ley Wien
     T= np.round(b/lamb_max)
 
     return T
-
+#%% Calculo de picos
 def picos (wave, flux, lineas, dist=10):
     '''
     La salida de la función es del tipo [picos,[prom,ancho]]; siendo cada elemento un array. En caso de no encontrar pico devuelve [0,[0,0]]
@@ -108,21 +108,22 @@ def categorizar(wave,flux,lineas,cat):
                 - Ca I 4226 es un valle cada vez mas prominente
     """
     return "Hola"
-
-def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10**4, lines = {}, distFunc = "KS"):
+#%% Comparacion automatica
+def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10**3 , lines = {}, distFunc = "WASS", nCandidates = 1, Normalise_Spectras = False):
     """
     CompareAllSpectra
     Dada una carpeta con ficheros en formato miles ([lambda,flux]), y un espectro problema en formato
     ([lambda, flux]), ambos normalizados. Se realiza el siguiente proceso:
         1. Interpolamos total (con picos y todo) el espectro problema (sp).
-        2. Cogemos un espectro de miles (sm). Le realizamos una interpolacion total (con picos y todo)
-        3. Calculamos KS entre las distribuciones. Usamos un dominio con un numero total de puntos nPoints Almacenamos el valor de la distancia en un array [Di]
+        2. Cogemos un espectro de miles (sm). Lo normalizamos y le realizamos una interpolacion total (con picos y todo)
+        3. Calculamos la distancia entre las distribuciones. Usamos un dominio con un numero total de puntos nPoints Almacenamos el valor de la distancia en un array [Di]
         4. Cogemos el siguiente espectro y repetimos (2,3)
         6. Cogemos el minimo del array. Buscamos su sm correspondiente por indice
         
     Si KS no va bien podemos usar Chi^2
     Renormalizamos los espectros
     """
+    #%%% Obtencion de datos
     print(60*"*" + "\nPREPARING COMPARISON WITH SPECTRAS" +"\n" +60*"*")
     spLamb = objSpectra[0].copy()
     spFlux = objSpectra[1].copy()
@@ -133,7 +134,7 @@ def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10
     n = len(FilesArr)
     DArr = np.zeros(n)
     #pArr = np.zeros(n) # Array de p-values relacionados con el test.
-    
+    #%%% Ajuste del espectro problema
     # Ajusto el objetivo con splines
     """
     ASUNTO IMPORTANTE: SI EL DOMINIO DE LAMBDAS DEL MILES ES MENOR AL DE LOS ESPECTROS
@@ -142,25 +143,32 @@ def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10
     ASI QUE LO QUE HAY QUE HACER ES TRUNCAR LAS LAMBDAS, NUNCA EXTRAPOLAR
     """
         # Normalizamos 
-    spFit, spFlux = normalizar.Normalizar(spLamb,spFlux, iteraciones = 50)
-    """
-    SSp.Blank_Spectra(spLamb, spFlux)
-    SSp.Blank_Spectra(spLamb,objSpectra[1])
-    """
+    if Normalise_Spectras:
+        spFit, spFlux = normalizar.Normalizar(spLamb,spFlux, iteraciones = 50)
     spInterpol = make_smoothing_spline(spLamb, spFlux,lam = 0)
     spMinLamb = np.min(spLamb)
     spMaxLamb = np.max(spLamb)
+    #%%% Comparando con la libreria de espectros
     # Voy archivo a archivo de Miles analizando
     for i in tqdm.tqdm(range(n)):
-        smLamb,smFlux = Load.Load_Miles(FilesArr[i], path = dataFolder)
+        currFile = FilesArr[i]
+        extension = currFile.split(".")[-1]
+        if extension == "asc":
+            smLamb,smFlux = Load.Load_Dat(currFile, path = dataFolder)
+        elif extension == "fits":   
+            smLamb,smFlux = Load.Load_Miles(currFile, path = dataFolder)
+        else:
+            print(f"ERROR: LA EXTENSION NO CORRESPONDE A NINGUNA COMPATIBLE: {extension}")
+            return None
         # Normalizo
-        smFit,smFlux = normalizar.Normalizar(smLamb, smFlux, iteraciones = 50)
+        if Normalise_Spectras:
+            smFit,smFlux = normalizar.Normalizar(smLamb, smFlux, iteraciones = 50)
         # Compruebo si el espectro problema o el objetivo tiene menor rango de lambdas
         minLamb = min(np.min(smLamb),spMinLamb)
         maxLamb = max(np.max(smLamb),spMaxLamb)
         # Ajusto con splines
         smInterpol =  make_smoothing_spline(smLamb, smFlux,lam = 0)
-        # Comparo KS en un mismo dominio
+        # Comparo  en un mismo dominio
         lambArr = np.linspace(minLamb, maxLamb,int(nPoints))
         if distFunc == "KS":
             result = kstest(smInterpol(lambArr),spInterpol(lambArr))[0] # Podriamos guardar tambien los pvalues
@@ -172,16 +180,26 @@ def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10
         # Almaceno los resultados
         DArr[i] = result 
         
-    # Tomo el minimo 
-    minD = np.min(DArr)    
-    indexMin = np.where(DArr == minD)[0][0]
-    # Busco a que espectro corresponde
-    smChosen = FilesArr[indexMin]
+    # Organizo el array de minimos para ordenarlos de menor a mayor
+    DSorted = np.sort(DArr)
+    minD = DSorted[:nCandidates] # Tomamos N candidatos con la minima distancia posible
+    smChosen = []
+    for i in range(nCandidates):
+        currIndex = np.where(DArr == DSorted[i])[0][0]
+        smChosen.append(FilesArr[currIndex])
+    smChosen = np.array(smChosen)
     # Printeo el resultado
-    print(f"KS Tests says that {smChosen} is the most probable spectra with distance {minD}")
-    print("Showing the comparison of spectras")
+    print(f"\nTests says that {smChosen[0]} is the most probable spectra with distance {minD[0]}. {distFunc} was used \n The {nCandidates} Rest Candidates are in the following order:")
+    for i in range(nCandidates):
+        print(f"{i+1}:", smChosen[i]) 
+    print("Showing the comparison of spectras for the minimun distance")
     # Printeamos la comparacion
-    smLamb,smFlux = Load.Load_Miles(smChosen, path = dataFolder)
+    currFile = smChosen[0]
+    extension = currFile.split(".")[-1]
+    if extension == "asc":
+        smLamb,smFlux = Load.Load_Dat(currFile, path = dataFolder)
+    elif extension == "fits": 
+        smLamb,smFlux = Load.Load_Miles(currFile, path = dataFolder)
     smFit,smNormFlux = normalizar.Normalizar(smLamb, smFlux, iteraciones = 50)
     defArr = np.empty((2,2), dtype=object)
     defArr[0,0] = objSpectra[0]
@@ -198,5 +216,5 @@ def CompareAllSpectra(dataFolder,objSpectra, outFolder = "Outputs", nPoints = 10
     
     #fitArr = np.array([spFit,smFit],dtype = object)
     #fitArr = np.array([np.array([spLamb,spInterpol(spLamb)],dtype = object),np.array([smLamb])]) # Ya se vera si se pone
-    SSp.Compare_Norms(defArr, normArr,title = f"Candidato para espectro: {smChosen} con D = {minD}", lines=lines)
-    return smChosen,minD,DArr
+    SSp.Compare_Norms(defArr, normArr,title = f"Candidato para espectro: {smChosen[0]} con D = {minD[0]}", lines=lines)
+    return smChosen,minD,smChosen,DArr
