@@ -52,7 +52,7 @@ def Norm_Agg(fr,params = [0.1,10,False,0.5]):
     else:
         f = fr
     aux = continuo(f,*params) # Sg es usar savgol o
-    return fr/aux
+    return f/aux
 
 
 def diflin(f,p,d): #aquí p es el índice del pico
