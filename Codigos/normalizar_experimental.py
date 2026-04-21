@@ -44,14 +44,14 @@ def continuo(fr,pr=0.1,d=5,sg=False,rl=0.5):
     for j in range(len(f)):
         if aux[j] == 0:
             aux[j] = f[j]
-    return aux
+    return aux,[[pk1,w1],[pk2,w2]]
 
 def Norm_Agg(fr,params = [0.1,10,False,0.5]):
     if params[2]:
         f = savgol_filter(fr,5,2)
     else:
         f = fr
-    aux = continuo(f,*params) # Sg es usar savgol o
+    aux = continuo(f,*params)[0] # Sg es usar savgol o
     return f/aux
 
 
