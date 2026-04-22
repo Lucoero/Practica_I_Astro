@@ -31,7 +31,9 @@ savgolParams = [97,startNorm,endNorm, "med",nIter]
 aggParams = [startNorm,endNorm,0.1,10,False,prominence] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
 useAgg = True
 
-
+# Si quieres normalizar una carpeta entera
+normFolder = "Catalogo_Miles"
+outputFolder = "MilesNormalizado"
 #%% Proceso principal
 lines = LinesLib.lines
 
@@ -54,3 +56,7 @@ originalSpectra = [lamb,flux]
 SSp.Compare_Norms([originalSpectra],[normSpectra],fitArr = [fit],NameArr = ["S1"], title = "Normalización de la Estrella 1")
 # Guardo
 LD.Write_Data([normSpectra],[outFilename],outDir)
+
+#%% Si queremos normalizar un folder entero
+aggParams[-1] = 0.5 # Prominencia siempre 0.5
+Norm.Normalise_Folder(normFolder, outputFolder, Norm.Norm_Agg, aggParams)
