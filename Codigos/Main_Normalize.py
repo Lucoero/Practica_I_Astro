@@ -59,4 +59,4 @@ LD.Write_Data([normSpectra],[outFilename],outDir)
 
 #%% Si queremos normalizar un folder entero
 aggParams[-1] = 0.5 # Prominencia siempre 0.5
-Norm.Normalise_Folder(normFolder, outputFolder, Norm.Norm_Agg, aggParams)
+#Norm.Normalise_Folder(normFolder, outputFolder, Norm.Norm_Agg, aggParams)
