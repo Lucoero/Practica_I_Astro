@@ -120,7 +120,14 @@ def Norm_Agg(lamb,flujo,params = [4000,-1,0.1,10,False,0.5]):
         flujo = savgol_filter(flujo,5,2)
     flujo = np.where(flujo > 0, flujo,0.00001)
     ajuste = np.copy(flujo)
+    
+    # Buscamos los indices de corte
     start_index = np.where(lamb > start)[0][0]
+    if end >= lamb[-1]: 
+        end = -1
+    elif end != -1: 
+        end = np.where(lamb > end)[0][0] 
+        
     flujo_cortado = flujo[start_index:end]
     lamb_cortado = lamb[start_index:end]
     print(lamb_cortado[-1])
