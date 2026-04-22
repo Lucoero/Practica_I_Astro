@@ -29,9 +29,6 @@ SN2Name = "SN2.dat"
 SN3Name = "SN3.dat"
 SN4Name = "SN4.dat"
 
-# Espectros del catalogo MILES. https://research.iac.es/proyecto/miles/pages/stellar-libraries/the-catalogue.php
-Miles_Name = "s0001.fits"
-
 nCan = 3 # El numero de candidatos que queremos devolver con la funcion comparador
 
 useAgg = True # Si queremos usar la normalizacion agresiva o no 
@@ -52,13 +49,6 @@ Lamb4,Flux4 = LD.Load_Dat(S4)
 LambsList = [Lamb1,Lamb2,Lamb3,Lamb4]
 FluxsList = [Flux1,Flux2,Flux3,Flux4]
 #%% Normalizacion
-nIter = 50
-params = [97] # Es el filtro de mediana (que separacion consideras para cortar y tal)
-startNorm = 4000
-endNorm = -1
-savgolParams = [97,startNorm,endNorm, "med",nIter]
-aggParams = [startNorm,endNorm,0.1,10,False,0.5] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
-
 # Llamamos a las normalizaciones que tenemos
 Lamb1,SN1 = LD.Load_Dat(SN1Name,problemNStars)
 Lamb2,SN2 = LD.Load_Dat(SN2Name,problemNStars)
@@ -69,7 +59,7 @@ NormProblema = [(Lamb1,SN1),(Lamb2,SN2),(Lamb3,SN3),(Lamb4,SN4)]
 
 #%% Busqueda del espectro
 
-smChosen1,minD1,smCh1,DArr1 = Par.CompareAllSpectra("MilesNormalizado", (Lamb1,Flux1),lines = lines, distFunc = "WASS", nCandidates = nCan,Normalise_Spectras = False)
+smChosen1,minD1,smCh1,DArr1 = Par.CompareAllSpectra("MilesNormalizado", (Lamb1,SN1),lines = lines, distFunc = "WASS", nCandidates = nCan,Normalise_Spectras = False)
 #0820, HD208501, B7Iab C
 #0711, HD176437, B9.5II-III C
 #0718, HD181470, A0III
@@ -90,30 +80,23 @@ smChosen4,minD4,smCh4,DArr4 = Par.CompareAllSpectra("MilesNormalizado", (Lamb4,F
 
 #SSp.Compare_Spectra(LambsList,FluxsList,NameArr = [S1,S2,S3,S4],lines = lines, title = "Estrellas Problema")
 
-#SSp.Blank_Spectra(Lamb1,N1)
 #%%% Ploteado de los resultados de la busqueda
 # Comparamos los candidatos del primero
 
-normalCompare1 = []
-normCompare1 = []
-smFit1 = []
+lambCompare1 = []
+fluxCompare1 = []
 
-normalCompare1.append((Lamb1,Flux1))
-normCompare1.append((Lamb1,SN1))
-smFit1.append([0,0])
+lambCompare1.append(Lamb1)
+fluxCompare1.append(Flux1)
 
 namesArr1 = []
 namesArr1.append(S1)
 for i in range(len(smCh1)):
-    smLamb,smFlux = LD.Load_Miles(smCh1[i])
-    normalCompare1.append((smLamb,smFlux))
-    
-    fit, smNorm = Norm.Normalizar(smLamb, smFlux) 
-    smFit1.append(fit)
-    normCompare1.append((smLamb,smNorm))
-    
+    smLamb,smFlux = LD.Load_Miles(smCh1[i],path = "MilesNormalizado")
+    lambCompare1.append(smLamb) 
+    fluxCompare1.append(smFlux)
     namesArr1.append(smCh1[i])
-SSp.Compare_Norms(normalCompare1,normCompare1, fitArr = smFit1, lines = lines, title = "Comparacion para el espectro problema 1",NameArr= namesArr1)
+SSp.Compare_Spectra(lambCompare1 ,fluxCompare1, lines = lines, title = "Comparacion para el espectro problema 1",NameArr= namesArr1)
 # Ahora los del segundo
 normalCompare1 = []
 normCompare1 = []
@@ -123,59 +106,21 @@ normalCompare1.append((Lamb2,Flux2))
 normCompare1.append((Lamb2,SN2))
 smFit1.append([0,0])
 
-namesArr1 = []
-namesArr1.append(S2)
+# Comparamos los candidatos del segundo
+
+lambCompare2 = []
+fluxCompare2 = []
+
+lambCompare2.append(Lamb1)
+fluxCompare2.append(Flux1)
+
+namesArr2 = []
+namesArr2.append(S2)
 for i in range(len(smCh2)):
-    smLamb,smFlux = LD.Load_Miles(smCh2[i])
-    normalCompare1.append((smLamb,smFlux))
-    
-    fit, smNorm = Norm.Normalizar(smLamb, smFlux) 
-    smFit1.append(fit)
-    normCompare1.append((smLamb,smNorm))
-    
-    namesArr1.append(smCh1[i])
-SSp.Compare_Norms(normalCompare1,normCompare1, fitArr = smFit1, lines = lines, title = "Comparacion para el espectro problema 2",NameArr= namesArr1)
-# Los del tercero
-normalCompare1 = []
-normCompare1 = []
-smFit1 = []
-
-normalCompare1.append((Lamb3,Flux3))
-normCompare1.append((Lamb3,SN3))
-smFit1.append([0,0])
-
-namesArr1 = []
-namesArr1.append(S3)
-for i in range(len(smCh3)):
-    smLamb,smFlux = LD.Load_Miles(smCh3[i])
-    normalCompare1.append((smLamb,smFlux))
-    
-    fit, smNorm = Norm.Normalizar(smLamb, smFlux) 
-    smFit1.append(fit)
-    normCompare1.append((smLamb,smNorm))
-    
-    namesArr1.append(smCh1[i])
-SSp.Compare_Norms(normalCompare1,normCompare1, fitArr = smFit1, lines = lines, title = "Comparacion para el espectro problema 3",NameArr= namesArr1)
-# Y los del cuarto
-normalCompare1 = []
-normCompare1 = []
-smFit1 = []
-
-normalCompare1.append((Lamb4,Flux4))
-normCompare1.append((Lamb4,SN4))
-smFit1.append([0,0])
-
-namesArr1 = []
-namesArr1.append(S4)
-for i in range(len(smCh4)):
-    smLamb,smFlux = LD.Load_Miles(smCh4[i])
-    normalCompare1.append((smLamb,smFlux))
-    
-    fit, smNorm = Norm.Normalizar(smLamb, smFlux) 
-    smFit1.append(fit)
-    normCompare1.append((smLamb,smNorm))
-    
-    namesArr1.append(smCh1[i])
-SSp.Compare_Norms(normalCompare1,normCompare1, fitArr = smFit1, lines = lines, title = "Comparacion para el espectro problema 4",NameArr= namesArr1)
+    smLamb,smFlux = LD.Load_Miles(smCh2[i], path = "MilesNormalizado")
+    lambCompare2.append(smLamb) 
+    fluxCompare2.append(smFlux)
+    namesArr2.append(smCh2[i])
+SSp.Compare_Spectra(lambCompare2 ,fluxCompare2, lines = lines, title = "Comparacion para el espectro problema 2",NameArr= namesArr2)
 
 
