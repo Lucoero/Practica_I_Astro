@@ -130,7 +130,6 @@ def Norm_Agg(lamb,flujo,params = [4000,-1,0.1,10,False,0.5]):
         
     flujo_cortado = flujo[start_index:end]
     lamb_cortado = lamb[start_index:end]
-    print(lamb_cortado[-1])
     ajusteLocal = Continuo(flujo_cortado,pr,d,sg,rl)[0] # Sg es usar savgol
     
     # Fin ajuste

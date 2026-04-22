@@ -17,12 +17,12 @@ import normalizar as Norm
 import LinesLib as LinesLib
 #%% Variables entrada
 isDat = True
-starFile = "Estrella1.dat"
+starFile = "Estrella4.dat"
 starDir = "Estrellas_Problema"
 outDir = "Estrellas_Problema"
-outFilename = "SN1"
+outFilename = "SN4"
 
-figTitle = "Estrella Problema 1"
+figTitle = "Estrella Problema 3"
 rl = 0.5 # Altura relativa de los picos empezando desde el fondo desde el cual mides la altura. LO BASICO A CAMBIAR
 
 startNorm = 4000 # Lamb donde quieres empezar la normalizacion
@@ -37,7 +37,7 @@ Agg Params:
     sg: Si queremos usar filtro savgol para eliminar ruido antes de normalizar
     rl: Altura relativa de los picos empezando desde el fundo del pico
 """
-aggParams = [startNorm,endNorm,0.08,10,False,rl] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
+aggParams = [startNorm,endNorm,0.1,10,False,rl] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
 useAgg = True
 
 # Si quieres normalizar una carpeta entera
@@ -67,5 +67,5 @@ SSp.Compare_Norms([originalSpectra],[normSpectra],fitArr = [fit],NameArr = ["S1"
 LD.Write_Data([normSpectra],[outFilename],outDir)
 
 #%% Si queremos normalizar un folder entero
-aggParams[-1] = 0.5 # Prominencia siempre 0.5
+#aggParams[-1] = 0.5 # Prominencia siempre 0.5
 #Norm.Normalise_Folder(normFolder, outputFolder, Norm.Norm_Agg, aggParams)
