@@ -17,18 +17,26 @@ import normalizar as Norm
 import LinesLib as LinesLib
 #%% Variables entrada
 isDat = True
-starFile = "Estrella2.dat"
+starFile = "Estrella1.dat"
 starDir = "Estrellas_Problema"
 outDir = "Estrellas_Problema"
-outFilename = "SN2"
+outFilename = "SN1"
 
-prominence = 0.85 # Altura de los picos en porcentaje empezando desde el fondo desde el cual mides la altura. LO BASICO A CAMBIAR
+rl = 0.5 # Altura relativa de los picos empezando desde el fondo desde el cual mides la altura. LO BASICO A CAMBIAR
 
 startNorm = 4000 # Lamb donde quieres empezar la normalizacion
-endNorm = -1 # Indice donde quieres acabar la normalizacion
+endNorm = 7500 # Indice donde quieres acabar la normalizacion
 nIter = 50 # N iteraciones si usas filtro savgol
 savgolParams = [97,startNorm,endNorm, "med",nIter]
-aggParams = [startNorm,endNorm,0.1,10,False,prominence] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
+"""
+Agg Params:
+    startNorm: El lambda en el que empezamos el ajuste (A)
+    endNorm: El lambda en el que acabamos el ajuste (A). Si se usa -1 llega hasta el final
+    pr: Prominencia de lo que se considera pico
+    sg: Si queremos usar filtro savgol para eliminar ruido antes de normalizar
+    rl: Altura relativa de los picos empezando desde el fundo del pico
+"""
+aggParams = [startNorm,endNorm,0.08,10,False,rl] # El ultimo parametro es la altura relativa donde interpolamos el pico (de abajo a arriba pico. 0 Es coger el fondo del pico)
 useAgg = True
 
 # Si quieres normalizar una carpeta entera
